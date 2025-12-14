@@ -1,0 +1,42 @@
+class AuditLogger {
+  constructor() {
+    this.logs = []
+    this.loadFromLocalStorage()
+  }
+
+  log(action, userId, details = {}) {
+    const logEntry = {
+      id: `log-${Date.now()}`,
+      action,
+      userId,
+      timestamp: new Date().toISOString(),
+      details
+    }
+    this.logs.unshift(logEntry)
+    this.saveToLocalStorage()
+    return logEntry
+  }
+
+  getLogs() {
+    return this.logs
+  }
+
+  saveToLocalStorage() {
+    try {
+      localStorage.setItem('logicore_logs', JSON.stringify(this.logs. slice(0, 1000)))
+    } catch (error) {
+      console.error('Failed to save logs:', error)
+    }
+  }
+
+  loadFromLocalStorage() {
+    try {
+      const saved = localStorage. getItem('logicore_logs')
+      if (saved) this.logs = JSON.parse(saved)
+    } catch (error) {
+      console.error('Failed to load logs:', error)
+    }
+  }
+}
+
+export const auditLogger = new AuditLogger()
